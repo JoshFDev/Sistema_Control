@@ -57,10 +57,9 @@ Para configurar el proyecto en un entorno compatible:
 
 Proyecto desarrollado con fines académicos durante el servicio social, enfocado en aplicar conocimientos de programación Java, desarrollo web, persistencia de datos y administración de bases de datos para atender necesidades de gestión escolar y administrativa.
 
-## Autor
-Junio 2024
-Ing. en Computación Joshua Sebastian Aboytes Uribe
-Ing. en Computación Sergio Axel Cazares Hernandez 
+## Autor - Junio 2024
+- Ing. en Computación Joshua Sebastian Aboytes Uribe
+- Ing. en Computación Sergio Axel Cazares Hernandez 
 
 ## Licencia
 
