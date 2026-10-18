@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 24/04/2025 06:54:50 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.User" table="user" catalog="controlcadetesdb" optimistic-lock="version">
+        <id name="idUser" type="java.lang.Integer">
+            <column name="idUser" />
+            <generator class="identity" />
+        </id>
+        <property name="usuario" type="string">
+            <column name="usuario" length="50" unique="true" />
+        </property>
+        <property name="contrasena" type="string">
+            <column name="contrasena" length="50" />
+        </property>
+    </class>
+</hibernate-mapping>

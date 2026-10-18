@@ -1,0 +1,672 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">    
+    <h:head>
+        <title>Lista General de Cursos</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="description" content="Listado completo de cursos disponibles en el sistema"/>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+        
+        <style>
+            :root {
+                --primary-color: #1a3a5f;
+                --secondary-color: #2a5378;
+                --accent-color: #1a3a5f;
+                --button-hover: #14304d;
+                --text-light: #ffffff;
+                --text-dark: #434a54;
+                --card-bg: #ffffff;
+                --bg-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                --error-color: #e74c3c;
+                --border-color: #e0e6ed;
+                --sidebar-width: 300px;
+            }
+            
+            /* Estilos para el growl */
+            .ui-growl {
+                top: 70px !important;
+                right: 20px !important;
+                position: fixed;
+                z-index: 1000;
+            }
+            
+            .ui-growl-item-container {
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                opacity: 0.95;
+                margin-bottom: 10px;
+            }
+            
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                background: #f8f9fa;
+            }
+            
+            .main-container {
+                display: flex;
+                min-height: 100vh;
+                width: 100%;
+            }
+            
+            .sidebar {
+                width: var(--sidebar-width);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                background: linear-gradient(135deg, #1a3a5f, #2a5378);
+                overflow-y: auto;
+                z-index: 100;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .moving-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 200%;
+                height: 200%;
+                background: 
+                    radial-gradient(circle, rgba(45, 204, 205, 0.15) 0%, transparent 70%) 0 0,
+                    radial-gradient(circle, rgba(45, 204, 205, 0.1) 0%, transparent 70%) 50px 50px;
+                background-size: 100px 100px;
+                animation: moveBg 40s linear infinite;
+                z-index: 0;
+            }
+            
+            @keyframes moveBg {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(-50%, -50%); }
+            }
+            
+            .sidebar-content {
+                position: relative;
+                z-index: 1;
+                color: white;
+                padding: 20px;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .sidebar-header {
+                text-align: center;
+                padding: 20px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                margin-bottom: 30px;
+            }
+            
+            .sidebar-header img {
+                width: 120px;
+                margin-bottom: 15px;
+            }
+            
+            .sidebar-header h1 {
+                font-size: 1.5rem;
+                margin: 0;
+            }
+            
+            .nav-menu {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .menu-item {
+                margin-bottom: 5px;
+            }
+            
+            .menu-link {
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: all 0.3s;
+            }
+            
+            .menu-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .menu-link i {
+                margin-right: 10px;
+                font-size: 1.1rem;
+                width: 24px;
+                text-align: center;
+            }
+            
+            .menu-link.active {
+                background: rgba(255, 255, 255, 0.2);
+                font-weight: 500;
+            }
+            
+            /* Estilos para el contenedor del dropdown de usuario */
+            .user-dropdown-container {
+                margin-top: auto;
+                padding: 20px 0 10px;
+                position: relative;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .user-dropdown {
+                width: 100%;
+            }
+            
+            .user-dropdown-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: all 0.3s;
+                margin-bottom: 8px;
+                font-size: 0.95rem;
+                background: rgba(255, 255, 255, 0.05);
+            }
+            
+            .user-dropdown-item i {
+                margin-right: 10px;
+                font-size: 1rem;
+                width: 20px;
+                text-align: center;
+            }
+            
+            .user-dropdown-item:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateX(5px);
+            }
+            
+            .user-dropdown-item.logout {
+                color: #ff6b6b;
+                background: rgba(255, 107, 107, 0.1);
+            }
+            
+            .user-dropdown-item.logout:hover {
+                background: rgba(255, 107, 107, 0.2);
+            }
+            
+            /* Animación de entrada para los items */
+            .user-dropdown-item {
+                opacity: 0;
+                transform: translateX(-10px);
+                animation: fadeInItem 0.4s forwards;
+            }
+            
+            .user-dropdown-item:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+            
+            .user-dropdown-item:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+            
+            @keyframes fadeInItem {
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            .content-panel {
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+                padding: 30px;
+                min-height: 100vh;
+                background-color: #f8f9fa;
+            }
+            
+            .top-bar {
+                background: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+            
+            .page-title h2 {
+                color: var(--primary-color);
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            
+            .user-profile {
+                display: flex;
+                align-items: center;
+            }
+            
+            .user-profile-container {
+                display: flex;
+                align-items: center;
+            }
+            
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                overflow: hidden;
+                margin-right: 10px;
+                border: 2px solid #e9ecef;
+            }
+            
+            .user-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .user-name {
+                font-weight: 500;
+                color: var(--primary-color);
+            }
+            
+            .form-card {
+                background: white;
+                border-radius: 10px;
+                padding: 30px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                border: 1px solid #e9ecef;
+                margin: 0 auto;
+                width: 100%;
+            }
+            
+            .form-header {
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            
+            .form-title {
+                color: var(--primary-color);
+                font-size: 1.8rem;
+                margin-bottom: 10px;
+                font-weight: 600;
+            }
+            
+            .form-subtitle {
+                color: #6c757d;
+                font-size: 1rem;
+            }
+            
+            /* Estilos para la tabla */
+            .material-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0;
+                margin-bottom: 20px;
+            }
+            
+            .material-table th {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 12px 15px;
+                text-align: left;
+                font-weight: 500;
+            }
+            
+            .material-table td {
+                padding: 12px 15px;
+                border-bottom: 1px solid #e9ecef;
+                vertical-align: middle;
+            }
+            
+            .material-table tr:hover td {
+                background-color: #f8f9fa;
+            }
+            
+            .material-table .ui-paginator {
+                background: white;
+                border: none;
+                padding: 15px 0;
+            }
+            
+            /* Estilos para botones */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                border-radius: 6px;
+                transition: all 0.3s;
+                cursor: pointer;
+                border: none;
+            }
+            
+            .btn-primary {
+                color: white;
+                background-color: var(--accent-color);
+            }
+            
+            .btn-primary:hover {
+                background-color: var(--button-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(26, 58, 95, 0.3);
+            }
+            
+            .btn-secondary {
+                color: var(--primary-color);
+                background-color: #f1f3f5;
+            }
+            
+            .btn-secondary:hover {
+                background-color: #e9ecef;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            
+            .btn-danger {
+                color: white;
+                background-color: #e74c3c;
+            }
+            
+            .btn-danger:hover {
+                background-color: #c0392b;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+            }
+            
+            /* Estilos para el diálogo */
+            .ui-dialog .ui-dialog-titlebar {
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                padding: 15px 20px;
+                font-weight: 500;
+            }
+            
+            .ui-dialog .ui-dialog-content {
+                padding: 20px;
+            }
+            
+            .ui-dialog .ui-dialog-buttonpane {
+                border-top: 1px solid #e9ecef;
+                padding: 15px 20px;
+                background: #f8f9fa;
+            }
+            
+            .excel-export {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 20px;
+                color: var(--primary-color);
+                font-weight: 500;
+                cursor: pointer;
+            }
+            
+            .excel-export:hover {
+                color: var(--button-hover);
+            }
+            
+            .footer {
+                margin-top: 40px;
+                padding: 20px;
+                text-align: center;
+                color: #6c757d;
+                font-size: 0.8rem;
+                border-top: 1px solid #e9ecef;
+            }
+            
+            @media (max-width: 992px) {
+                .sidebar {
+                    width: 250px;
+                }
+                
+                .content-panel {
+                    margin-left: 250px;
+                    width: calc(100% - 250px);
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                }
+                
+                .content-panel {
+                    margin-left: 0;
+                    width: 100%;
+                    padding: 20px;
+                }
+            }
+            
+            @media (max-width: 576px) {
+                .top-bar {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    padding: 15px;
+                }
+                
+                .user-profile {
+                    margin-top: 15px;
+                }
+                
+                .form-card {
+                    padding: 20px;
+                }
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <div class="main-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="moving-bg"></div>
+                <div class="sidebar-content">
+                    <div class="sidebar-header">
+                        <img src="#{facesContext.externalContext.requestContextPath}/images/logo.png" 
+                             alt="Logo Institucional"/>
+                        <h1>Centro de Comunicaciones</h1>
+                    </div>
+                    
+                    <div class="nav-menu">
+                        <div class="menu-item">
+                            <h:link outcome="AltaCadete" styleClass="menu-link">
+                                <i class="fas fa-user-plus"></i> Alta de Cadetes
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="ListaCadetes" styleClass="menu-link">
+                                <i class="fas fa-users"></i> Gestión de Cadetes
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="AltaCursos" styleClass="menu-link">
+                                <i class="fas fa-book"></i> Crear Cursos
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="ListaCursos" styleClass="menu-link active">
+                                <i class="fas fa-list-alt"></i> Catálogo de Cursos
+                            </h:link>
+                        </div>
+                        
+                        <div class="user-dropdown-container">
+                            <div class="user-dropdown">
+                                <a href="index.xhtml" class="user-dropdown-item logout">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contenido principal -->
+            <div class="content-panel">
+                <!-- Growl debe estar FUERA del formulario -->
+                <p:growl id="growl" showDetail="true" life="3000" sticky="false"/>
+                
+                <!-- Barra superior -->
+                <div class="top-bar">
+                    <div class="page-title">
+                        <h2>Lista General de Cursos</h2>
+                    </div>
+                    
+                    <div class="user-profile">
+                        <div class="user-profile-container">
+                            <div class="user-avatar">
+                                <img src="#{facesContext.externalContext.requestContextPath}/images/IconoLogin.png" 
+                                     alt="Foto de usuario"/>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contenedor principal -->
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2 class="form-title">Catálogo de Cursos</h2>
+                        <p class="form-subtitle">Listado completo de cursos disponibles en el sistema</p>
+                    </div>
+                    
+                    <h:form>
+                        <p:commandButton value="Regresar al Inicio" action="Menu.xhtml?faces-redirect=true" 
+                                       styleClass="btn btn-secondary" icon="fas fa-arrow-left"/>
+                    </h:form>
+
+                    <h:form id="formMostrarCursos">
+                        <!-- Botón Exportar a Excel -->
+                        <div class="excel-export">
+                            <p:commandLink styleClass="excel-export">
+                                <i class="fas fa-file-excel" style="font-size: 1.2rem; color: #1d6f42;"></i>
+                                Exportar a Excel
+                                <p:dataExporter type="xls" target="tabla" fileName="Lista de Cursos" />
+                            </p:commandLink>
+                        </div>
+                        
+                        <!-- Tabla de Cursos -->
+                        <p:dataTable id="tabla" var="per" value="#{cursoBean.cursos}" 
+                                     emptyMessage="No hay cursos registrados" paginator="true" rows="10"
+                                     paginatorPosition="top" paginatorTemplate="{CurrentPageReport} {FirstPageLink}
+                                     {PreviousPageLink} {PageLinks} {NextPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     styleClass="material-table" scrollable="true" scrollWidth="100%">
+
+                            <p:column headerText="ID Curso" filterBy="#{per.idcurso}" sortBy="#{per.idcurso}">
+                                <h:outputText value="#{per.idcurso}"/>
+                            </p:column>                
+                            <p:column headerText="Nombre del Curso" filterBy="#{per.nombre}" sortBy="#{per.nombre}">
+                                <h:outputText value="#{per.nombre}"/>
+                            </p:column>             
+
+                            <p:column headerText="Editar" exportable="false" style="width: 120px;">
+                                <p:commandButton value="Editar" icon="fas fa-edit"
+                                                 onclick="PF('dlgEditarCurso').show();"
+                                                 update=":formEditarCurso"
+                                                 styleClass="btn btn-primary">
+                                    <f:setPropertyActionListener
+                                        target="#{cursoBean.curso}"
+                                        value="#{per}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="Eliminar" exportable="false" style="width: 120px;">
+                                <p:commandButton value="Eliminar" icon="fas fa-trash-alt"
+                                                 onclick="PF('dlgEliminarCurso').show();"
+                                                 styleClass="btn btn-danger">
+                                    <f:setPropertyActionListener
+                                        target="#{cursoBean.curso}"
+                                        value="#{per}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <!-- Dialogo Editar -->
+                    <p:dialog id="dialogEditarCurso" 
+                              header="Editar Curso"
+                              widgetVar="dlgEditarCurso" modal="true"
+                              resizable="false" minWidth="300">
+                        <h:form id="formEditarCurso">
+                            <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+                                <p:outputLabel value="ID Curso:"/>
+                                <h:outputText value="#{cursoBean.curso.idcurso}"/>
+                                
+                                <p:outputLabel value="Nombre del Curso:"/>
+                                <p:inputText value="#{cursoBean.curso.nombre}" required="true" styleClass="form-input"/>
+                            </p:panelGrid>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                                <p:commandButton action="#{cursoBean.modificar}"
+                                               value="Modificar" icon="fas fa-save"
+                                               update=":formMostrarCursos:tabla"
+                                               oncomplete="PF('dlgEditarCurso').hide();"
+                                               styleClass="btn btn-primary"/>
+                                <p:commandButton value="Cancelar" icon="fas fa-times"
+                                               onclick="PF('dlgEditarCurso').hide();"
+                                               styleClass="btn btn-secondary"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Dialogo Eliminar -->
+                    <p:dialog id="dialogEliminarCurso"
+                              header="Eliminar Curso"
+                              widgetVar="dlgEliminarCurso" modal="true"
+                              resizable="false" minWidth="300">
+                        <h:form id="formEliminarCurso">
+                            <p>¿Desea eliminar el curso <strong>#{cursoBean.curso.nombre}</strong>?</p>
+                            <p style="color: var(--error-color); margin-top: 10px;">
+                                <i class="fas fa-exclamation-triangle"></i> Esta acción no se puede deshacer
+                            </p>
+                            
+                            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                                <p:commandButton action="#{cursoBean.eliminar}"
+                                               value="Sí, eliminar" icon="fas fa-check"
+                                               update=":formMostrarCursos:tabla"
+                                               oncomplete="PF('dlgEliminarCurso').hide();"
+                                               styleClass="btn btn-danger"/>
+                                <p:commandButton value="Cancelar" icon="fas fa-times"
+                                               onclick="PF('dlgEliminarCurso').hide();"
+                                               styleClass="btn btn-secondary"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <div class="footer">
+                        © 2025 Sistema de Gestión - Todos los derechos reservados
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // Detener animación cuando no es visible (mejora rendimiento)
+            const sidebar = document.querySelector('.sidebar');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const movingBg = entry.target.querySelector('.moving-bg');
+                    if (entry.isIntersecting) {
+                        movingBg.style.animationPlayState = 'running';
+                    } else {
+                        movingBg.style.animationPlayState = 'paused';
+                    }
+                });
+            }, {threshold: 0.1});
+            
+            if (sidebar) {
+                observer.observe(sidebar);
+            }
+        </script>
+    </h:body>
+</html>

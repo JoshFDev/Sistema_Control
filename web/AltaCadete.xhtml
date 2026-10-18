@@ -1,0 +1,889 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Alta de Cadete</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="description" content="Formulario para registrar nuevos cadetes en el sistema de gestión"/>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+        
+        <style>
+            :root {
+                --primary-color: #1a3a5f;
+                --secondary-color: #2a5378;
+                --accent-color: #1a3a5f;
+                --button-hover: #14304d;
+                --text-light: #ffffff;
+                --text-dark: #434a54;
+                --card-bg: #ffffff;
+                --bg-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                --error-color: #e74c3c;
+                --border-color: #e0e6ed;
+                --sidebar-width: 300px;
+                --panel-header-bg: #f8f9fa;
+                --panel-border: #e9ecef;
+            }
+            
+            /* Estilos para el growl */
+            .ui-growl {
+                top: 70px !important;
+                right: 20px !important;
+                position: fixed;
+                z-index: 1000;
+            }
+            
+            .ui-growl-item-container {
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                opacity: 0.95;
+                margin-bottom: 10px;
+            }
+            
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                background: #f8f9fa;
+            }
+            
+            .main-container {
+                display: flex;
+                min-height: 100vh;
+                width: 100%;
+            }
+            
+            .sidebar {
+                width: var(--sidebar-width);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                background: linear-gradient(135deg, #1a3a5f, #2a5378);
+                overflow-y: auto;
+                z-index: 100;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .moving-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 200%;
+                height: 200%;
+                background: 
+                    radial-gradient(circle, rgba(45, 204, 205, 0.15) 0%, transparent 70%) 0 0,
+                    radial-gradient(circle, rgba(45, 204, 205, 0.1) 0%, transparent 70%) 50px 50px;
+                background-size: 100px 100px;
+                animation: moveBg 40s linear infinite;
+                z-index: 0;
+            }
+            
+            @keyframes moveBg {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(-50%, -50%); }
+            }
+            
+            .sidebar-content {
+                position: relative;
+                z-index: 1;
+                color: white;
+                padding: 20px;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .sidebar-header {
+                text-align: center;
+                padding: 20px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                margin-bottom: 30px;
+            }
+            
+            .sidebar-header img {
+                width: 120px;
+                margin-bottom: 15px;
+            }
+            
+            .sidebar-header h1 {
+                font-size: 1.5rem;
+                margin: 0;
+            }
+            
+            .nav-menu {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .menu-item {
+                margin-bottom: 5px;
+            }
+            
+            .menu-link {
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: all 0.3s;
+            }
+            
+            .menu-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .menu-link i {
+                margin-right: 10px;
+                font-size: 1.1rem;
+                width: 24px;
+                text-align: center;
+            }
+            
+            .menu-link.active {
+                background: rgba(255, 255, 255, 0.2);
+                font-weight: 500;
+            }
+            
+            .user-dropdown-container {
+                margin-top: auto;
+                padding: 20px 0 10px;
+                position: relative;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .user-dropdown {
+                width: 100%;
+            }
+            
+            .user-dropdown-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: all 0.3s;
+                margin-bottom: 8px;
+                font-size: 0.95rem;
+                background: rgba(255, 255, 255, 0.05);
+            }
+            
+            .user-dropdown-item i {
+                margin-right: 10px;
+                font-size: 1rem;
+                width: 20px;
+                text-align: center;
+            }
+            
+            .user-dropdown-item:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateX(5px);
+            }
+            
+            .user-dropdown-item.logout {
+                color: #ff6b6b;
+                background: rgba(255, 107, 107, 0.1);
+            }
+            
+            .user-dropdown-item.logout:hover {
+                background: rgba(255, 107, 107, 0.2);
+            }
+            
+            @keyframes fadeInItem {
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            .content-panel {
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+                padding: 30px;
+                min-height: 100vh;
+                background-color: #f8f9fa;
+            }
+            
+            .top-bar {
+                background: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+            
+            .page-title h2 {
+                color: var(--primary-color);
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            
+            .user-profile {
+                display: flex;
+                align-items: center;
+            }
+            
+            .user-profile-container {
+                display: flex;
+                align-items: center;
+            }
+            
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                overflow: hidden;
+                margin-right: 10px;
+                border: 2px solid #e9ecef;
+            }
+            
+            .user-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .user-name {
+                font-weight: 500;
+                color: var(--primary-color);
+            }
+            
+            .form-container {
+                background: white;
+                border-radius: 10px;
+                padding: 30px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                border: 1px solid #e9ecef;
+                margin: 0 auto;
+                max-width: 1200px;
+            }
+            
+            .form-header {
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            
+            .form-title {
+                color: var(--primary-color);
+                font-size: 1.8rem;
+                margin-bottom: 10px;
+                font-weight: 600;
+            }
+            
+            .form-subtitle {
+                color: #6c757d;
+                font-size: 1rem;
+            }
+            
+            .form-panel {
+                margin-bottom: 30px;
+                border: 1px solid var(--panel-border);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .form-panel-header {
+                background-color: var(--panel-header-bg);
+                padding: 15px 20px;
+                border-bottom: 1px solid var(--panel-border);
+                font-weight: 600;
+                color: var(--primary-color);
+                display: flex;
+                align-items: center;
+            }
+            
+            .form-panel-header i {
+                margin-right: 10px;
+                color: var(--accent-color);
+            }
+            
+            .form-panel-content {
+                padding: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+            
+            .form-label {
+                width: 220px;
+                font-weight: 600;
+                color: var(--text-dark);
+                padding-top: 12px;
+            }
+            
+            .form-input {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .ui-inputtext, .ui-selectonemenu, .ui-inputtextarea, .ui-calendar {
+                width: 100% !important;
+                max-width: 400px !important;
+                border: 1px solid var(--border-color) !important;
+                border-radius: 6px !important;
+                padding: 12px 15px !important;
+                background-color: #f8f9fa !important;
+                font-family: inherit !important;
+                transition: all 0.3s !important;
+                box-sizing: border-box !important;
+            }
+            
+            .ui-inputtext:focus, .ui-selectonemenu:focus, .ui-inputtextarea:focus, .ui-calendar:focus {
+                outline: none !important;
+                border-color: var(--accent-color) !important;
+                box-shadow: 0 0 0 3px rgba(26, 58, 95, 0.2) !important;
+                background-color: white !important;
+            }
+            
+            .ui-selectonemenu .ui-selectonemenu-trigger {
+                background-color: #f8f9fa !important;
+                border-left: 1px solid var(--border-color) !important;
+            }
+            
+            .ui-selectonemenu-panel {
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+                border: 1px solid var(--border-color) !important;
+            }
+            
+            .ui-calendar {
+                display: flex !important;
+                max-width: 200px !important;
+            }
+            
+            .ui-inputtextarea {
+                resize: vertical;
+                min-height: 80px;
+                max-width: 100% !important;
+            }
+            
+            .button-group {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 30px;
+                gap: 15px;
+            }
+            
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                font-weight: 500;
+                padding: 12px 24px;
+                font-size: 1rem;
+                border-radius: 6px;
+                transition: all 0.3s;
+                cursor: pointer;
+                border: none;
+            }
+            
+            .btn-primary {
+                color: white;
+                background-color: var(--accent-color);
+            }
+            
+            .btn-primary:hover {
+                background-color: var(--button-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(26, 58, 95, 0.3);
+            }
+            
+            .btn-secondary {
+                color: var(--primary-color);
+                background-color: #f1f3f5;
+            }
+            
+            .btn-secondary:hover {
+                background-color: #e9ecef;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            
+            .ui-message-error {
+                color: var(--error-color);
+                font-size: 0.875rem;
+                margin-top: 0.5rem;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .footer {
+                margin-top: 40px;
+                padding: 20px;
+                text-align: center;
+                color: #6c757d;
+                font-size: 0.8rem;
+                border-top: 1px solid #e9ecef;
+            }
+            
+            @media (max-width: 992px) {
+                .sidebar {
+                    width: 250px;
+                }
+                
+                .content-panel {
+                    margin-left: 250px;
+                    width: calc(100% - 250px);
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                }
+                
+                .content-panel {
+                    margin-left: 0;
+                    width: 100%;
+                    padding: 20px;
+                }
+                
+                .form-group {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                
+                .form-label {
+                    width: 100%;
+                    padding-top: 0;
+                    margin-bottom: 8px;
+                }
+                
+                .form-input {
+                    width: 100%;
+                }
+                
+                .ui-inputtext, .ui-selectonemenu, .ui-inputtextarea, .ui-calendar {
+                    max-width: 100% !important;
+                }
+                
+                .button-group {
+                    flex-direction: column;
+                }
+                
+                .btn {
+                    width: 100%;
+                }
+            }
+            
+            @media (max-width: 576px) {
+                .top-bar {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    padding: 15px;
+                }
+                
+                .user-profile {
+                    margin-top: 15px;
+                }
+                
+                .form-container {
+                    padding: 20px;
+                }
+                
+                .form-panel-content {
+                    padding: 15px;
+                }
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <div class="main-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="moving-bg"></div>
+                <div class="sidebar-content">
+                    <div class="sidebar-header">
+                        <img src="#{facesContext.externalContext.requestContextPath}/images/logo.png" 
+                             alt="Logo Institucional"/>
+                        <h1>Centro de Comunicaciones</h1>
+                    </div>
+                    
+                    <div class="nav-menu">
+                        <div class="menu-item">
+                            <h:link outcome="AltaCadete" styleClass="menu-link active">
+                                <i class="fas fa-user-plus"></i> Alta de Cadetes
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="ListaCadetes" styleClass="menu-link">
+                                <i class="fas fa-users"></i> Gestión de Cadetes
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="AltaCursos" styleClass="menu-link">
+                                <i class="fas fa-book"></i> Crear Cursos
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="ListaCursos" styleClass="menu-link">
+                                <i class="fas fa-list-alt"></i> Catálogo de Cursos
+                            </h:link>
+                        </div>
+                        
+                        <div class="user-dropdown-container">
+                            <div class="user-dropdown">
+                                <a href="index.xhtml" class="user-dropdown-item logout">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contenido principal -->
+            <div class="content-panel">
+                <!-- Growl debe estar FUERA del formulario -->
+                <p:growl id="growl" showDetail="true" life="3000" sticky="false"/>
+                
+                <!-- Barra superior -->
+                <div class="top-bar">
+                    <div class="page-title">
+                        <h2>Alta de Cadete</h2>
+                    </div>
+                    
+                    <div class="user-profile">
+                        <div class="user-profile-container">
+                            <div class="user-avatar">
+                                <img src="#{facesContext.externalContext.requestContextPath}/images/IconoLogin.png" 
+                                     alt="Foto de usuario"/>
+                            </div>
+                    
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Formulario -->
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2 class="form-title">Registro de Nuevo Cadete</h2>
+                        <p class="form-subtitle">Complete todos los campos requeridos para registrar un nuevo cadete</p>
+                    </div>
+                    
+                    <h:form id="formCadete">
+                        <!-- Sección de Información Militar -->
+                        <div class="form-panel">
+                            <div class="form-panel-header">
+                                <i class="fas fa-shield-alt"></i> Información Militar
+                            </div>
+                            <div class="form-panel-content">
+                                <div class="form-group">
+                                    <p:outputLabel value="Procedencia:" styleClass="form-label" for="procedencia"/>
+                                    <div class="form-input">
+                                        <p:inputText id="procedencia" value="#{cadeteBean.cadete.procedencia}" required="true"
+                                                   requiredMessage="La procedencia es obligatoria" maxlength="50"/>
+                                        <p:message for="procedencia" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Matrícula:" styleClass="form-label" for="matricula"/>
+                                    <div class="form-input">
+                                        <p:inputText id="matricula" value="#{cadeteBean.cadete.matricula}" required="true"
+                                                   requiredMessage="La matrícula es obligatoria" maxlength="20"/>
+                                        <p:message for="matricula" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Grado que ostenta:" styleClass="form-label" for="gradoOstento"/>
+                                    <div class="form-input">
+                                        <p:inputText id="gradoOstento" value="#{cadeteBean.cadete.gradoOstento}" maxlength="150"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="¿Es hijo de militar?" styleClass="form-label" for="hijoMilitar"/>
+                                    <div class="form-input">
+                                        <p:selectOneMenu id="hijoMilitar" value="#{cadeteBean.cadete.hijoMilitar}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                            <f:selectItem itemLabel="Sí" itemValue="Sí"/>
+                                            <f:selectItem itemLabel="No" itemValue="No"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Nombre Padre/Madre Militar:" styleClass="form-label" for="nombrePadreOmadreMilitar"/>
+                                    <div class="form-input">
+                                        <p:inputText id="nombrePadreOmadreMilitar" value="#{cadeteBean.cadete.nombrePadreOmadreMilitar}" maxlength="200"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Estado Padre/Madre Militar:" styleClass="form-label" for="estadoPadreOmadreMilitar"/>
+                                    <div class="form-input">
+                                        <p:inputText id="estadoPadreOmadreMilitar" value="#{cadeteBean.cadete.estadoPadreOmadreMilitar}" maxlength="20"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="¿Tiene beneficio de examen?" styleClass="form-label" for="beneficioExamen"/>
+                                    <div class="form-input">
+                                        <p:selectOneMenu id="beneficioExamen" value="#{cadeteBean.cadete.beneficioExamen}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                            <f:selectItem itemLabel="Sí" itemValue="Sí"/>
+                                            <f:selectItem itemLabel="No" itemValue="No"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Promedio de Ingreso:" styleClass="form-label" for="promedioIngreso"/>
+                                    <div class="form-input">
+                                        <p:inputText id="promedioIngreso" value="#{cadeteBean.cadete.promedioIngreso}"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Promedio de Egreso:" styleClass="form-label" for="promedioEgreso"/>
+                                    <div class="form-input">
+                                        <p:inputText id="promedioEgreso" value="#{cadeteBean.cadete.promedioEgreso}"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Cursos Adicionales:" styleClass="form-label" for="cursosAdicionales"/>
+                                    <div class="form-input">
+                                        <p:inputTextarea id="cursosAdicionales" value="#{cadeteBean.cadete.cursosAdicionales}" rows="3"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Curso:" styleClass="form-label" for="curso"/>
+                                    <div class="form-input">
+                                        <p:selectOneMenu id="curso" value="#{cadeteBean.cadete.curso.idcurso}" required="true"
+                                                       requiredMessage="Seleccione un curso">
+                                            <f:selectItem itemLabel="Seleccione un curso" itemValue="#{null}"/>
+                                            <f:selectItems value="#{cursoBean.cursos}" var="curso"
+                                                         itemLabel="#{curso.nombre}" itemValue="#{curso.idcurso}"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="curso" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Información Personal -->
+                        <div class="form-panel">
+                            <div class="form-panel-header">
+                                <i class="fas fa-user"></i> Información Personal
+                            </div>
+                            <div class="form-panel-content">
+                                <div class="form-group">
+                                    <p:outputLabel value="Nombres:" styleClass="form-label" for="nombres"/>
+                                    <div class="form-input">
+                                        <p:inputText id="nombres" value="#{cadeteBean.cadete.nombres}" required="true"
+                                                   requiredMessage="Los nombres son obligatorios" maxlength="200"/>
+                                        <p:message for="nombres" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Apellido paterno:" styleClass="form-label" for="paterno"/>
+                                    <div class="form-input">
+                                        <p:inputText id="paterno" value="#{cadeteBean.cadete.paterno}" required="true"
+                                                   requiredMessage="El apellido paterno es obligatorio" maxlength="50"/>
+                                        <p:message for="paterno" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Apellido materno:" styleClass="form-label" for="materno"/>
+                                    <div class="form-input">
+                                        <p:inputText id="materno" value="#{cadeteBean.cadete.materno}" maxlength="50"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Edad:" styleClass="form-label" for="edad"/>
+                                    <div class="form-input">
+                                        <p:inputText id="edad" value="#{cadeteBean.cadete.edad}" required="true"
+                                                   requiredMessage="La edad es obligatoria"/>
+                                        <p:message for="edad" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Sexo:" styleClass="form-label" for="sexo"/>
+                                    <div class="form-input">
+                                        <p:selectOneMenu id="sexo" value="#{cadeteBean.cadete.sexo}" required="true"
+                                                       requiredMessage="El sexo es obligatorio">
+                                            <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                            <f:selectItem itemLabel="Masculino" itemValue="Masculino"/>
+                                            <f:selectItem itemLabel="Femenino" itemValue="Femenino"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="sexo" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Estado Civil:" styleClass="form-label" for="estadoCivil"/>
+                                    <div class="form-input">
+                                        <p:inputText id="estadoCivil" value="#{cadeteBean.cadete.estadoCivil}" maxlength="50"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="RFC:" styleClass="form-label" for="rfc"/>
+                                    <div class="form-input">
+                                        <p:inputText id="rfc" value="#{cadeteBean.cadete.rfc}" maxlength="13"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Fecha de nacimiento:" styleClass="form-label" for="fechaNacimiento"/>
+                                    <div class="form-input">
+                                        <p:calendar id="fechaNacimiento" value="#{cadeteBean.cadete.fechaNacimiento}" pattern="dd/MM/yyyy"
+                                                    required="true" requiredMessage="La fecha de nacimiento es obligatoria"/>
+                                        <p:message for="fechaNacimiento" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Lugar de nacimiento:" styleClass="form-label" for="lugarNacimiento"/>
+                                    <div class="form-input">
+                                        <p:inputText id="lugarNacimiento" value="#{cadeteBean.cadete.lugarNacimiento}" maxlength="100"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Nacionalidad:" styleClass="form-label" for="nacionalidad"/>
+                                    <div class="form-input">
+                                        <p:inputText id="nacionalidad" value="#{cadeteBean.cadete.nacionalidad}" maxlength="100"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Información de Contacto -->
+                        <div class="form-panel">
+                            <div class="form-panel-header">
+                                <i class="fas fa-address-book"></i> Información de Contacto
+                            </div>
+                            <div class="form-panel-content">
+                                <div class="form-group">
+                                    <p:outputLabel value="Celular:" styleClass="form-label" for="celular"/>
+                                    <div class="form-input">
+                                        <p:inputText id="celular" value="#{cadeteBean.cadete.celular}"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Correo Electrónico:" styleClass="form-label" for="correoElectronico"/>
+                                    <div class="form-input">
+                                        <p:inputText id="correoElectronico" value="#{cadeteBean.cadete.correoElectronico}" maxlength="100"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Dirección:" styleClass="form-label" for="direccion"/>
+                                    <div class="form-input">
+                                        <p:inputTextarea id="direccion" value="#{cadeteBean.cadete.direccion}" maxlength="500" rows="3"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Fechas Importantes -->
+                        <div class="form-panel">
+                            <div class="form-panel-header">
+                                <i class="fas fa-calendar-alt"></i> Fechas Importantes
+                            </div>
+                            <div class="form-panel-content">
+                                <div class="form-group">
+                                    <p:outputLabel value="Fecha de ingreso:" styleClass="form-label" for="fechaIngreso"/>
+                                    <div class="form-input">
+                                        <p:calendar id="fechaIngreso" value="#{cadeteBean.cadete.fechaIngreso}" pattern="dd/MM/yyyy"
+                                                   required="true" requiredMessage="La fecha de ingreso es obligatoria"/>
+                                        <p:message for="fechaIngreso" styleClass="ui-message-error"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Fecha de egreso:" styleClass="form-label" for="fechaEgreso"/>
+                                    <div class="form-input">
+                                        <p:calendar id="fechaEgreso" value="#{cadeteBean.cadete.fechaEgreso}" pattern="dd/MM/yyyy"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Documentación -->
+                        <div class="form-panel">
+                            <div class="form-panel-header">
+                                <i class="fas fa-file-alt"></i> Documentación
+                            </div>
+                            <div class="form-panel-content">
+                                <div class="form-group">
+                                    <p:outputLabel value="Fotografía:" styleClass="form-label" for="fotografia"/>
+                                    <div class="form-input">
+                                        <p:inputText id="fotografia" value="#{cadeteBean.cadete.fotografia}" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:outputLabel value="Archivo:" styleClass="form-label" for="archivo"/>
+                                    <div class="form-input">
+                                        <p:inputText id="archivo" value="#{cadeteBean.cadete.archivo}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <p:commandButton value="Guardar" action="#{cadeteBean.insertar()}" 
+                                           update=":growl, @form" styleClass="btn btn-primary"
+                                           icon="fas fa-save"/>
+                            <p:button value="Volver al Menú" outcome="Menu" styleClass="btn btn-secondary"
+                                    icon="fas fa-times"/>
+                        </div>
+                    </h:form>
+                </div>
+                
+                <div class="footer">
+                    © 2025 Sistema de Gestión - Todos los derechos reservados
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // Detener animación cuando no es visible (mejora rendimiento)
+            const sidebar = document.querySelector('.sidebar');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const movingBg = entry.target.querySelector('.moving-bg');
+                    if (entry.isIntersecting) {
+                        movingBg.style.animationPlayState = 'running';
+                    } else {
+                        movingBg.style.animationPlayState = 'paused';
+                    }
+                });
+            }, {threshold: 0.1});
+            
+            if (sidebar) {
+                observer.observe(sidebar);
+            }
+        </script>
+    </h:body>
+</html>

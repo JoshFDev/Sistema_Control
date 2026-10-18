@@ -1,0 +1,573 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Insertar Nuevo Curso</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="description" content="Formulario para crear nuevos cursos en el sistema de gestión"/>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+        
+        <style>
+            :root {
+                --primary-color: #1a3a5f;
+                --secondary-color: #2a5378;
+                --accent-color: #1a3a5f;
+                --button-hover: #14304d;
+                --text-light: #ffffff;
+                --text-dark: #434a54;
+                --card-bg: #ffffff;
+                --bg-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                --error-color: #e74c3c;
+                --border-color: #e0e6ed;
+                --sidebar-width: 300px;
+            }
+            
+            /* Estilos para el growl */
+            .ui-growl {
+                top: 70px !important;
+                right: 20px !important;
+                position: fixed;
+                z-index: 1000;
+            }
+            
+            .ui-growl-item-container {
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                opacity: 0.95;
+                margin-bottom: 10px;
+            }
+            
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                background: #f8f9fa;
+            }
+            
+            .main-container {
+                display: flex;
+                min-height: 100vh;
+                width: 100%;
+            }
+            
+            .sidebar {
+                width: var(--sidebar-width);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                background: linear-gradient(135deg, #1a3a5f, #2a5378);
+                overflow-y: auto;
+                z-index: 100;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .moving-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 200%;
+                height: 200%;
+                background: 
+                    radial-gradient(circle, rgba(45, 204, 205, 0.15) 0%, transparent 70%) 0 0,
+                    radial-gradient(circle, rgba(45, 204, 205, 0.1) 0%, transparent 70%) 50px 50px;
+                background-size: 100px 100px;
+                animation: moveBg 40s linear infinite;
+                z-index: 0;
+            }
+            
+            @keyframes moveBg {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(-50%, -50%); }
+            }
+            
+            .sidebar-content {
+                position: relative;
+                z-index: 1;
+                color: white;
+                padding: 20px;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .sidebar-header {
+                text-align: center;
+                padding: 20px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                margin-bottom: 30px;
+            }
+            
+            .sidebar-header img {
+                width: 120px;
+                margin-bottom: 15px;
+            }
+            
+            .sidebar-header h1 {
+                font-size: 1.5rem;
+                margin: 0;
+            }
+            
+            .nav-menu {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .menu-item {
+                margin-bottom: 5px;
+            }
+            
+            .menu-link {
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: all 0.3s;
+            }
+            
+            .menu-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .menu-link i {
+                margin-right: 10px;
+                font-size: 1.1rem;
+                width: 24px;
+                text-align: center;
+            }
+            
+            .menu-link.active {
+                background: rgba(255, 255, 255, 0.2);
+                font-weight: 500;
+            }
+            
+            /* Estilos para el contenedor del dropdown de usuario */
+            .user-dropdown-container {
+                margin-top: auto;
+                padding: 20px 0 10px;
+                position: relative;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .user-dropdown {
+                width: 100%;
+            }
+            
+            .user-dropdown-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: all 0.3s;
+                margin-bottom: 8px;
+                font-size: 0.95rem;
+                background: rgba(255, 255, 255, 0.05);
+            }
+            
+            .user-dropdown-item i {
+                margin-right: 10px;
+                font-size: 1rem;
+                width: 20px;
+                text-align: center;
+            }
+            
+            .user-dropdown-item:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateX(5px);
+            }
+            
+            .user-dropdown-item.logout {
+                color: #ff6b6b;
+                background: rgba(255, 107, 107, 0.1);
+            }
+            
+            .user-dropdown-item.logout:hover {
+                background: rgba(255, 107, 107, 0.2);
+            }
+            
+            /* Animación de entrada para los items */
+            .user-dropdown-item {
+                opacity: 0;
+                transform: translateX(-10px);
+                animation: fadeInItem 0.4s forwards;
+            }
+            
+            .user-dropdown-item:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+            
+            .user-dropdown-item:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+            
+            @keyframes fadeInItem {
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            .content-panel {
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+                padding: 30px;
+                min-height: 100vh;
+                background-color: #f8f9fa;
+            }
+            
+            .top-bar {
+                background: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+            
+            .page-title h2 {
+                color: var(--primary-color);
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            
+            .user-profile {
+                display: flex;
+                align-items: center;
+            }
+            
+            .user-profile-container {
+                display: flex;
+                align-items: center;
+            }
+            
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                overflow: hidden;
+                margin-right: 10px;
+                border: 2px solid #e9ecef;
+            }
+            
+            .user-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .user-name {
+                font-weight: 500;
+                color: var(--primary-color);
+            }
+            
+            .form-card {
+                background: white;
+                border-radius: 10px;
+                padding: 30px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                border: 1px solid #e9ecef;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            .form-header {
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            
+            .form-title {
+                color: var(--primary-color);
+                font-size: 1.8rem;
+                margin-bottom: 10px;
+                font-weight: 600;
+            }
+            
+            .form-subtitle {
+                color: #6c757d;
+                font-size: 1rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+                color: var(--text-dark);
+            }
+            
+            .form-label.required::after {
+                content: " *";
+                color: var(--error-color);
+            }
+            
+            .form-input {
+                width: 100%;
+                padding: 12px 15px;
+                font-size: 1rem;
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                transition: all 0.3s;
+                background-color: #f8f9fa;
+                font-family: inherit;
+            }
+            
+            .form-input:focus {
+                border-color: var(--accent-color);
+                outline: 0;
+                box-shadow: 0 0 0 3px rgba(26, 58, 95, 0.2);
+                background-color: white;
+            }
+            
+            .button-group {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 30px;
+                gap: 15px;
+            }
+            
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                font-weight: 500;
+                padding: 12px 24px;
+                font-size: 1rem;
+                border-radius: 6px;
+                transition: all 0.3s;
+                cursor: pointer;
+                border: none;
+                flex: 1;
+            }
+            
+            .btn-primary {
+                color: white;
+                background-color: var(--accent-color);
+            }
+            
+            .btn-primary:hover {
+                background-color: var(--button-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(26, 58, 95, 0.3);
+            }
+            
+            .btn-secondary {
+                color: var(--primary-color);
+                background-color: #f1f3f5;
+            }
+            
+            .btn-secondary:hover {
+                background-color: #e9ecef;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            
+            .ui-message-error {
+                color: var(--error-color);
+                font-size: 0.875rem;
+                margin-top: 0.5rem;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .footer {
+                margin-top: 40px;
+                padding: 20px;
+                text-align: center;
+                color: #6c757d;
+                font-size: 0.8rem;
+                border-top: 1px solid #e9ecef;
+            }
+            
+            @media (max-width: 992px) {
+                .sidebar {
+                    width: 250px;
+                }
+                
+                .content-panel {
+                    margin-left: 250px;
+                    width: calc(100% - 250px);
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                }
+                
+                .content-panel {
+                    margin-left: 0;
+                    width: 100%;
+                    padding: 20px;
+                }
+                
+                .button-group {
+                    flex-direction: column;
+                }
+                
+                .btn {
+                    width: 100%;
+                }
+            }
+            
+            @media (max-width: 576px) {
+                .top-bar {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    padding: 15px;
+                }
+                
+                .user-profile {
+                    margin-top: 15px;
+                }
+                
+                .form-card {
+                    padding: 20px;
+                }
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <div class="main-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="moving-bg"></div>
+                <div class="sidebar-content">
+                    <div class="sidebar-header">
+                        <img src="#{facesContext.externalContext.requestContextPath}/images/logo.png" 
+                             alt="Logo Institucional"/>
+                        <h1>Centro de Comunicaciones</h1>
+                    </div>
+                    
+                    <div class="nav-menu">
+                        <div class="menu-item">
+                            <h:link outcome="AltaCadete" styleClass="menu-link">
+                                <i class="fas fa-user-plus"></i> Alta de Cadetes
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="ListaCadetes" styleClass="menu-link">
+                                <i class="fas fa-users"></i> Gestión de Cadetes
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="AltaCursos" styleClass="menu-link active">
+                                <i class="fas fa-book"></i> Crear Cursos
+                            </h:link>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <h:link outcome="ListaCursos" styleClass="menu-link">
+                                <i class="fas fa-list-alt"></i> Catálogo de Cursos
+                            </h:link>
+                        </div>
+                        
+                        <div class="user-dropdown-container">
+                            <div class="user-dropdown">
+                                <a href="index.xhtml" class="user-dropdown-item logout">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contenido principal -->
+            <div class="content-panel">
+                <!-- Growl debe estar FUERA del formulario -->
+                <p:growl id="growl" showDetail="true" life="3000" sticky="false"/>
+                
+                <!-- Barra superior -->
+                <div class="top-bar">
+                    <div class="page-title">
+                        <h2>Nuevo Curso</h2>
+                    </div>
+                    
+                    <div class="user-profile">
+                        <div class="user-profile-container">
+                            <div class="user-avatar">
+                                <img src="#{facesContext.externalContext.requestContextPath}/images/IconoLogin.png" 
+                                     alt="Foto de usuario"/>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Formulario -->
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2 class="form-title">Insertar Nuevo Curso</h2>
+                        <p class="form-subtitle">Complete los campos requeridos para registrar un nuevo curso</p>
+                    </div>
+                    
+                    <h:form id="formInsertar">
+                        <div class="form-group">
+                            <h:outputLabel for="nombreCurso" value="Nombre del Curso" styleClass="form-label required"/>
+                            <p:inputText id="nombreCurso" value="#{cursoBean.curso.nombre}" 
+                                       styleClass="form-input" required="true"
+                                       maxlength="50" requiredMessage="El nombre del curso es obligatorio."
+                                       placeholder="Ingrese el nombre del curso"/>
+                            <p:message for="nombreCurso" display="icon" styleClass="ui-message-error"/>
+                        </div>
+                        
+                        <div class="button-group">
+                            <!-- Usar :growl para referencia absoluta -->
+                            <p:commandButton value="Guardar" action="#{cursoBean.insertar()}"
+                                           update=":growl, @form" styleClass="btn btn-primary"
+                                           icon="fas fa-plus-circle">
+                            </p:commandButton>
+                            
+                            <p:button value="Volver al Menú" outcome="Menu" styleClass="btn btn-secondary"
+                                    icon="fas fa-arrow-left">
+                            </p:button>
+                        </div>
+                    </h:form>
+                </div>
+                
+                <div class="footer">
+                    © 2025 Sistema de Gestión - Todos los derechos reservados
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // Detener animación cuando no es visible (mejora rendimiento)
+            const sidebar = document.querySelector('.sidebar');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const movingBg = entry.target.querySelector('.moving-bg');
+                    if (entry.isIntersecting) {
+                        movingBg.style.animationPlayState = 'running';
+                    } else {
+                        movingBg.style.animationPlayState = 'paused';
+                    }
+                });
+            }, {threshold: 0.1});
+            
+            if (sidebar) {
+                observer.observe(sidebar);
+            }
+        </script>
+    </h:body>
+</html>

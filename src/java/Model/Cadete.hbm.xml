@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 24/04/2025 06:54:50 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.Cadete" table="cadete" catalog="controlcadetesdb" optimistic-lock="version">
+        <id name="idcadete" type="java.lang.Integer">
+            <column name="idcadete" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="curso" class="Model.Curso" fetch="select">
+            <column name="idcurso" />
+        </many-to-one>
+        <property name="procedencia" type="string">
+            <column name="procedencia" length="50" />
+        </property>
+        <property name="matricula" type="string">
+            <column name="matricula" length="20" />
+        </property>
+        <property name="gradoOstento" type="string">
+            <column name="gradoOstento" length="150" />
+        </property>
+        <property name="hijoMilitar" type="string">
+            <column name="hijoMilitar" length="5" />
+        </property>
+        <property name="beneficioExamen" type="string">
+            <column name="beneficioExamen" length="5" />
+        </property>
+        <property name="nombres" type="string">
+            <column name="nombres" length="200" />
+        </property>
+        <property name="paterno" type="string">
+            <column name="paterno" length="50" />
+        </property>
+        <property name="materno" type="string">
+            <column name="materno" length="50" />
+        </property>
+        <property name="edad" type="java.lang.Byte">
+            <column name="edad" />
+        </property>
+        <property name="sexo" type="string">
+            <column name="sexo" length="12" />
+        </property>
+        <property name="fechaNacimiento" type="date">
+            <column name="fechaNacimiento" length="10" />
+        </property>
+        <property name="lugarNacimiento" type="string">
+            <column name="lugarNacimiento" length="100" />
+        </property>
+        <property name="nacionalidad" type="string">
+            <column name="nacionalidad" length="100" />
+        </property>
+        <property name="fechaIngreso" type="date">
+            <column name="fechaIngreso" length="10" />
+        </property>
+        <property name="fechaEgreso" type="date">
+            <column name="fechaEgreso" length="10" />
+        </property>
+        <property name="celular" type="java.lang.Long">
+            <column name="celular" />
+        </property>
+        <property name="direccion" type="string">
+            <column name="direccion" length="500" />
+        </property>
+        <property name="fotografia" type="string">
+            <column name="fotografia" />
+        </property>
+        <property name="promedioIngreso" type="java.lang.Double">
+            <column name="promedioIngreso" precision="22" scale="0" />
+        </property>
+        <property name="promedioEgreso" type="java.lang.Double">
+            <column name="promedioEgreso" precision="22" scale="0" />
+        </property>
+        <property name="cursosAdicionales" type="string">
+            <column name="cursosAdicionales" length="65535" />
+        </property>
+        <property name="estadoCivil" type="string">
+            <column name="estadoCivil" length="50" />
+        </property>
+        <property name="rfc" type="string">
+            <column name="rfc" length="13" />
+        </property>
+        <property name="correoElectronico" type="string">
+            <column name="correoElectronico" length="100" />
+        </property>
+        <property name="nombrePadreOmadreMilitar" type="string">
+            <column name="nombrePadreOMadreMilitar" length="200" />
+        </property>
+        <property name="estadoPadreOmadreMilitar" type="string">
+            <column name="estadoPadreOMadreMilitar" length="20" />
+        </property>
+        <property name="archivo" type="string">
+            <column name="archivo" length="1000" />
+        </property>
+    </class>
+</hibernate-mapping>

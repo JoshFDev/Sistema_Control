@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Recuperar Contraseña</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style>
+            body {
+                font-family: 'Segoe UI', Arial, sans-serif;
+                background-image: url("#{facesContext.externalContext.requestContextPath}/images/fondoInicio.jpg");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+            
+            .recovery-container {
+                width: 100%;
+                max-width: 500px;
+                padding: 0 20px;
+            }
+            
+            .recovery-card {
+                background-color: rgba(255, 255, 255, 0.96);
+                border-radius: 10px;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                padding: 40px 35px;
+                text-align: center;
+                border-top: 5px solid #003366;
+            }
+            
+            .user-info {
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #f8f9fa;
+                border-radius: 5px;
+                border-left: 4px solid #003366;
+            }
+            
+            .action-button {
+                margin: 5px;
+                padding: 8px 15px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            
+            .edit-button {
+                background-color: #003366;
+                color: white;
+            }
+            
+            .delete-button {
+                background-color: #dc3545;
+                color: white;
+            }
+            
+            .back-button {
+                background-color: #6c757d;
+                color: white;
+                margin-top: 20px;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <div class="recovery-container">
+            <div class="recovery-card">
+                <h1>Recuperar Contraseña</h1>
+                <p>Ingrese su nombre de usuario para recuperar su información</p>
+<h:form id="recoveryForm">
+    <p:panelGrid columns="2" style="width:100%; margin-top:20px;">
+        <p:outputLabel for="username" value="Usuario:"/>
+        <p:inputText id="username" value="#{userBean.inputUsuario}" 
+                   required="true" requiredMessage="Usuario requerido"/>
+        
+        <p:commandButton value="Buscar" action="#{userBean.buscarUsuarioPorNombre()}" 
+                       update="recoveryForm"  styleClass="login-button"
+                       oncomplete="if(#{userBean.usuarioEncontrado != null}) {PF('editDialog').show()}" />
+    </p:panelGrid>
+    
+    <!-- Esta parte se mostrará/ocultará automáticamente al actualizar el formulario -->
+    <h:panelGroup id="userInfo" rendered="#{userBean.usuarioEncontrado != null}">
+        <div class="user-info">
+            <p><strong>Usuario:</strong> #{userBean.usuarioEncontrado.usuario}</p>
+            <p><strong>Contraseña actual:</strong> #{userBean.usuarioEncontrado.contrasena}</p>
+            
+            <p:commandButton value="Editar Contraseña" 
+                           onclick="PF('editDialog').show()"
+                           styleClass="action-button edit-button"/>
+        </div>
+    </h:panelGroup>
+</h:form>
+            </div>
+        </div>
+        
+<p:dialog header="Editar Contraseña" widgetVar="editDialog" modal="true" resizable="false">
+    <h:form id="editForm">
+        <p:panelGrid columns="2" style="width:100%">
+            <p:outputLabel value="Usuario:"/>
+            <p:outputLabel value="#{userBean.usuarioEncontrado.usuario}"/>
+            
+            <p:outputLabel for="newPassword" value="Nueva Contraseña:"/>
+            <p:password id="newPassword" value="#{userBean.nuevaContrasena}" 
+                       required="true" feedback="false"/>
+        </p:panelGrid>
+        
+        <p:commandButton value="Guardar" action="#{userBean.actualizarContrasena()}" 
+                       update=":recoveryForm:userInfo, :growl"
+                       oncomplete="PF('editDialog').hide()"/>
+    </h:form>
+</p:dialog>
+        
+        <!-- Diálogo de Eliminación -->
+        <p:dialog header="Confirmar Eliminación" widgetVar="deleteDialog" modal="true" resizable="false">
+            <h:form id="deleteForm">
+                <h:outputText value="¿Está seguro que desea eliminar el usuario #{userBean.user.iduser}?"/>
+                
+                <p:commandButton value="Confirmar" action="#{userBean.eliminar()}" 
+                               update=":recoveryForm :growl"
+                               oncomplete="PF('deleteDialog').hide()"/>
+                <p:commandButton value="Cancelar" onclick="PF('deleteDialog').hide()" immediate="true"/>
+            </h:form>
+        </p:dialog>
+        
+        <p:growl id="growl" life="3000" showDetail="true" sticky="false"/>
+    </h:body>
+</html>

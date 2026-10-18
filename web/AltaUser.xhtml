@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Registro de Usuario</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style>
+            /* Estilos base consistentes con el login */
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                overflow: hidden;
+            }
+            
+            /* Layout principal similar al login */
+            .main-container {
+                display: flex;
+                min-height: 100vh;
+                width: 100%;
+            }
+            
+            /* Panel izquierdo con animación - igual que en login */
+            .image-panel {
+                width: 40%;
+                position: relative;
+                background: linear-gradient(135deg, #1a3a5f, #2a5378);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+            }
+            
+            .moving-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 200%;
+                height: 200%;
+                background: 
+                    radial-gradient(circle, rgba(45, 204, 205, 0.15) 0%, transparent 70%) 0 0,
+                    radial-gradient(circle, rgba(45, 204, 205, 0.1) 0%, transparent 70%) 50px 50px;
+                background-size: 100px 100px;
+                animation: moveBg 40s linear infinite;
+                z-index: 0;
+            }
+            
+            @keyframes moveBg {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(-50%, -50%); }
+            }
+            
+            .panel-content {
+                position: relative;
+                z-index: 1;
+                color: white;
+                text-align: center;
+                padding: 20px;
+                max-width: 80%;
+            }
+            
+            .panel-content img {
+                width: 200px; /* Cambiado de 150px a 200px para igualar al login */
+                margin-bottom: 30px;
+            }
+            
+            .panel-content h1 {
+                font-size: 2.2rem;
+                margin-bottom: 15px;
+            }
+            
+            .panel-content p {
+                font-size: 1.1rem;
+                opacity: 0.9;
+            }
+            
+            /* Panel derecho - formulario */
+            .form-panel {
+                width: 60%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #f8f9fa;
+            }
+            
+            .login-card {
+                width: 100%;
+                max-width: 400px;
+                background: white;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .avatar-container {
+                margin: 0 auto 25px auto;
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 4px solid #e9ecef;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .avatar-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .form-title {
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            
+            .form-title h2 {
+                color: #1a3a5f;
+                margin-bottom: 10px;
+            }
+            
+            .form-title p {
+                color: #6c757d;
+            }
+            
+            /* Estilo para alinear etiquetas a la izquierda y quitar asterisco */
+            .form-label-left {
+                display: block;
+                text-align: left;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: #1a3a5f;
+            }
+            
+            .ui-inputfield {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 15px;
+                transition: all 0.3s;
+            }
+            
+            .ui-inputfield:focus {
+                border-color: #2dcccd;
+                box-shadow: 0 0 0 0.2rem rgba(45, 204, 205, 0.25);
+            }
+            
+            .ui-button {
+                width: 100%;
+                padding: 12px;
+                background: #1a3a5f;
+                border: none;
+                color: white;
+                font-size: 16px;
+                border-radius: 6px;
+                transition: all 0.3s;
+                margin-top: 15px;
+            }
+            
+            .ui-button:hover {
+                background: #2a5378;
+                transform: translateY(-2px);
+            }
+            
+            .login-link {
+                display: block;
+                text-align: center;
+                margin-top: 15px;
+                color: #1a3a5f;
+                font-size: 14px;
+                text-decoration: none;
+            }
+            
+            .login-link:hover {
+                text-decoration: underline;
+            }
+            
+            .footer {
+                font-size: 0.8rem;
+                color: #6c757d;
+                text-align: center;
+                margin-top: 30px;
+            }
+            
+            .ui-message {
+                font-size: 13px !important;
+                color: #dc3545 !important;
+                display: block;
+                text-align: left;
+                margin-top: 5px !important;
+            }
+            
+            /* Responsive */
+            @media (max-width: 768px) {
+                .main-container {
+                    flex-direction: column;
+                    overflow: auto;
+                }
+                
+                .image-panel, .form-panel {
+                    width: 100%;
+                    min-height: 50vh;
+                }
+                
+                .moving-bg {
+                    animation: none;
+                }
+                
+                .login-card {
+                    padding: 30px 20px;
+                }
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <div class="main-container">
+            <!-- Panel izquierdo con animación -->
+            <div class="image-panel">
+                <div class="moving-bg"></div>
+                <div class="panel-content">
+                    <img src="#{facesContext.externalContext.requestContextPath}/images/logo.png" 
+                         alt="Logo Institucional"/>
+                    <h1>Centro de Comunicaciones</h1>
+                    <p>Sistema de gestión integral</p>
+                </div>
+            </div>
+            
+            <!-- Panel derecho - formulario con foto de usuario -->
+            <div class="form-panel">
+                <div class="login-card">
+                    <!-- Avatar del usuario -->
+                    <div class="avatar-container">
+                        <img src="#{facesContext.externalContext.requestContextPath}/images/IconoLogin.png" 
+                             alt="Foto de usuario"/>
+                    </div>
+                    
+                    <div class="form-title">
+                        <h2>Registro de usuario</h2>
+                        <p>Ingrese sus datos</p>
+                    </div>
+                    
+                    <h:form id="loginForm">
+                        <div class="form-group">
+                            <p:outputLabel for="username" value="Usuario" styleClass="form-label-left"/>
+                            <p:inputText id="username" value="#{userBean.user.usuario}" 
+                                       required="true" requiredMessage="Usuario requerido"
+                                       placeholder="Ingrese su usuario"
+                                       styleClass="ui-inputfield"/>
+                            <p:message for="username"/>
+                        </div>
+
+                        <div class="form-group">
+                            <p:outputLabel for="password" value="Contraseña" styleClass="form-label-left"/>
+                            <p:password id="password" value="#{userBean.user.contrasena}" 
+                                      required="true" requiredMessage="Contraseña requerida"
+                                      placeholder="Ingrese su contraseña" feedback="false"
+                                      validatorMessage="La contraseña debe tener al menos 8 caracteres">
+                                <f:validateLength minimum="8" />
+                            </p:password>
+                            <p:message for="password"/>
+                        </div>
+
+                        <p:commandButton actionListener="#{userBean.inserta()}" 
+                                       value="Registrarse" 
+                                       styleClass="ui-button"
+                                       update="growl"/>
+                        
+                        <a href="#{request.contextPath}/index.xhtml" class="login-link">¿Ya tiene cuenta?</a>
+                        
+                        <p class="footer">© 2025 Sistema de Gestión - Todos los derechos reservados</p>
+
+                        <p:growl id="growl" life="3000" showDetail="true" sticky="false"/>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>
